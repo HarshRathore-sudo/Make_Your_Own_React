@@ -1,0 +1,28 @@
+{
+  "name": "didact",
+  "version": "1.0.0",
+  "description": "Making our own React",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "test": "react-scripts test --env=jsdom"
+  },
+  "author": "Harsh Rathore",
+  "license": "ISC",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/plugin-transform-react-jsx": "^7.23.4"
+  }
+}
