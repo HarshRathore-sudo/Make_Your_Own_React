@@ -34,24 +34,34 @@ function render(element, container) {
   //   });
 
   // container.appendChild(dom);
-  nextUnitOfWork = {
+
+  // <------    ---->
+  // nextUnitOfWork = {
+  //   dom: container,
+  //   props: {
+  //     children: [element],
+  //   },
+  // };
+
+  wipRoot = {
     dom: container,
     props: {
       children: [element],
     },
   };
+
+  nextUnitOfWork = wipRoot;
 }
 
 let nextUnitOfWork = null;
+let wipRoot = null;
+
+
 
 function performNextUnitOfWork(fiber) {
   if (!fiber.dom) {
     fiber.dom = createDom(fiber);
   }
-  if (fiber.parent) {
-    fiber.parent.dom.appendChild(fiber.dom);
-  }
-
   const elements = fiber.props.children;
 
   let index = 0;
@@ -89,6 +99,42 @@ function performNextUnitOfWork(fiber) {
     nextFiber = nextFiber.parent;
   }
 }
+
+function commitRoot(){
+  commitWork(wipRoot.child);
+
+  wipRoot = null;
+
+}
+
+function commitWork(fiber){
+  if(!fiber){
+    return
+  }
+
+  domParent = fiber.parent.dom;
+  domParent.appendChild(fiber.dom);
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+}
+
+function workLoop(deadline) {
+  let shouldYield = false;
+
+  while(nextUnitOfWork && !shouldYield) {
+    nextUnitOfWork = performNextUnitOfWork(nextUnitOfWork);
+    shouldYield = deadline.timeRemaining() < 1;
+  }
+
+  if(!nextUnitOfWork && wipRoot){
+    commitRoot()
+  }
+
+  requestIdleCallback(workLoop);
+
+}
+
+requestIdleCallback(workLoop);
 
 const Didact = {
   createElement,
